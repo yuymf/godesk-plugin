@@ -1,0 +1,57 @@
+name: Verify GoDesk production
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 3 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify public installer and protected creator routes
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          origin="https://godesk.yumengfan220.workers.dev"
+          installer="$(mktemp)"
+          headers="$(mktemp)"
+
+          curl --fail --silent --show-error \
+            --dump-header "$headers" \
+            --output "$installer" \
+            "$origin/chatgpt-plugin"
+          grep -q "GoDesk" "$installer"
+          grep -qi "^content-type: text/html" "$headers"
+
+          asset_path="$(
+            grep -oE '/assets/[^"[:space:]]+\.(js|css)' "$installer" |
+              head -n 1
+          )"
+          test -n "$asset_path"
+          curl --fail --silent --show-error \
+            --output /dev/null \
+            "$origin$asset_path"
+
+          for path in / /mcp; do
+            status="$(
+              curl --silent --show-error \
+                --output /dev/null \
+                --write-out '%{http_code}' \
+                "$origin$path"
+            )"
+            case "$status" in
+              302|401|403) ;;
+              *)
+                echo "Expected Cloudflare Access on $path, got HTTP $status" >&2
+                exit 1
+                ;;
+            esac
+          done
+
+          echo "Installer is public; creator and MCP routes require Cloudflare Access."
