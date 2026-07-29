@@ -38,20 +38,32 @@ jobs:
             --output /dev/null \
             "$origin$asset_path"
 
-          for path in / /mcp; do
-            status="$(
-              curl --silent --show-error \
-                --output /dev/null \
-                --write-out '%{http_code}' \
-                "$origin$path"
-            )"
-            case "$status" in
-              302|401|403) ;;
-              *)
-                echo "Expected Cloudflare Access on $path, got HTTP $status" >&2
-                exit 1
-                ;;
-            esac
-          done
+          root_status="$(
+            curl --silent --show-error \
+              --output /dev/null \
+              --write-out '%{http_code}' \
+              "$origin/"
+          )"
+          case "$root_status" in
+            302|401|403) ;;
+            *)
+              echo "Expected Cloudflare Access on /, got HTTP $root_status" >&2
+              exit 1
+              ;;
+          esac
 
-          echo "Installer is public; creator and MCP routes require Cloudflare Access."
+          mcp_headers="$(mktemp)"
+          mcp_status="$(
+            curl --silent --show-error \
+              --header "Accept: application/json" \
+              --header "MCP-Protocol-Version: 2025-06-18" \
+              --dump-header "$mcp_headers" \
+              --output /dev/null \
+              --write-out '%{http_code}' \
+              "$origin/mcp"
+          )"
+          test "$mcp_status" = "401"
+          grep -qi "^www-authenticate: Bearer" "$mcp_headers"
+          grep -qi "resource_metadata=" "$mcp_headers"
+
+          echo "Installer is public; creator routes require Access; MCP exposes OAuth discovery."
