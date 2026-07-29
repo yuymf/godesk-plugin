@@ -26,7 +26,7 @@ jobs:
             --dump-header "$headers" \
             --output "$installer" \
             "$origin/chatgpt-plugin"
-          grep -q "GoDesk" "$installer"
+          grep -q "Godesk" "$installer"
           grep -qi "^content-type: text/html" "$headers"
 
           asset_path="$(
