@@ -38,6 +38,21 @@ jobs:
             --output /dev/null \
             "$origin$asset_path"
 
+          for metadata_path in \
+            /.well-known/oauth-protected-resource \
+            /.well-known/oauth-protected-resource/mcp; do
+            metadata_headers="$(mktemp)"
+            metadata_body="$(mktemp)"
+            curl --fail --silent --show-error \
+              --dump-header "$metadata_headers" \
+              --output "$metadata_body" \
+              "$origin$metadata_path"
+            grep -qi "^content-type: application/json" "$metadata_headers"
+            jq -e --arg resource "$origin/mcp" \
+              '.resource == $resource and (.authorization_servers | length > 0)' \
+              "$metadata_body" >/dev/null
+          done
+
           root_status="$(
             curl --silent --show-error \
               --output /dev/null \
