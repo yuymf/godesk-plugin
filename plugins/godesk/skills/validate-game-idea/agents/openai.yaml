@@ -1,0 +1,4 @@
+interface:
+  display_name: "Optional: test one claim"
+  short_description: "Record one optional finding after a playable game exists"
+  default_prompt: "This game is already playable. Use $validate-game-idea only if I named one claim to test."

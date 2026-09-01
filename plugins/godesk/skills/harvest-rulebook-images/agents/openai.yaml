@@ -1,0 +1,4 @@
+interface:
+  display_name: "Harvest rulebook images"
+  short_description: "Extract rulebook art into the Source Library"
+  default_prompt: "Use $harvest-rulebook-images to add usable rulebook images to this GoDesk project."
