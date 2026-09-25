@@ -33,7 +33,9 @@ iteration tools, not the destination.
    `project-asset` images as bindable Rule System material. A generated Project
    Asset must retain its creator brief and every influencing Visual Reference
    in `basedOnSourceIds`.
-7. Submit compilation, bot playtest, preview, and export work with `submit_job`.
+7. Submit compilation, bot playtest, and export work with `submit_job`.
+   Open a Build preview at the compile or `read_build` `playableUrl`; do not
+   enqueue a preview job.
    The Web Studio also exposes a bounded `iterate-rule-system` job for one
    explicit action-description rewrite; it records the prompt as a creator
    source, applies one versioned patch, and must be followed by compile and
@@ -75,16 +77,31 @@ iteration tools, not the destination.
 
 ## Executable Kernel choice
 
-- `hidden-role-v1` executes secret roles, one public speech per seat, one
-  accusation per seat, and majority reveal. Use it for 剧本杀 / hidden-role
-  sources. Do not substitute a score race.
-- `hand-play-v1` executes a shuffled deck, hidden hands, play-to-score, and
-  first-to-target or highest score when hands empty.
+Playability Floor (ADR 0012) gates share on genre fidelity **and decision
+density**: a named Kernel with an empty contract (no hands, fewer than 2
+placeable regions, no speech actions, no roles/accuse path) must fail the
+floor.
+
+- `hidden-role-v1` executes **source-derived** secret roles (defaults 凶手 /
+  侦探 / 平民 when unnamed), one public speech per seat, one accusation per
+  seat, and majority reveal. Use it for 剧本杀 / hidden-role sources. Do not
+  substitute a score race. Multi-act scripts, clue boards, and staged evidence
+  loops must **not** share as the one-shot speak→accuse subset — refuse
+  configure / fail Playability Floor until a faithful subset exists. Do not
+  invent LLM-judged narrative wins.
+- `hand-play-v1` executes a **source-derived** shuffled deck, hidden hands,
+  play-to-score, and first-to-target or highest score when hands empty.
+  Derive `cardValues` / `copiesPerValue` / `handSize` / `victoryTarget` from
+  the brief (defaults match hobbyist 聚会卡牌). Trick-taking, shedding, suit,
+  and effect loops must **not** share as play-to-score — refuse configure /
+  fail Playability Floor until a faithful subset exists.
 - `conversation-relay-v1` records required speech into the transcript and
-  scores the chosen action.
-- `harbor-voyage-v1` executes worker placement on a harbor table.
+  ends on a turn budget; people judge prose (no kernel score race).
+- `harbor-voyage-v1` executes worker placement on a **harbor-themed** table (cargo / berths / pilot). Use it only for harbor-like sources.
+- `worker-placement-v1` executes source-derived named regions with capacity and workers per seat. Pure score briefs use place→occupy→resolvePoints. Economy briefs (wood yield + workshop convert + build-N) use the economy subset and win by buildings — never share resolvePoints-as-building. Do **not** map non-harbor briefs onto harbor cargo IDs.
 - `score-race-v1` executes explicit per-seat point actions, a victory target,
   and a turn limit. Use it only when the source itself is a point race.
+- Do **not** silently map weak/ambiguous genre cues (near-miss card verbs like 「出牌/打牌」, placement 「资源区」, role/conversation hints) onto `score-race-v1`. Broaden to the faithful genre kernel when cues are clear enough, otherwise keep the Rule System draft / fail Playability Floor with an honest unsupported gap. True generic point races remain shareable.
 - `shared-goal-v1` executes explicit turn-taking actions that add to one shared
   progress track, a shared target, and a turn limit. It has no winner seat;
   completion means the shared target was reached.
@@ -107,6 +124,12 @@ iteration tools, not the destination.
   limit ends without a winner.
 - Keep unsupported source behavior visible. Do not convert a cooperative goal
   into a competitive score race merely because both actions carry numbers.
+- To revise Kernel values on an existing project, use the matching
+  `configure_*` op via `apply_project_patch`: genre kernels use
+  `configure_hidden_role`, `configure_hand_play`,
+  `configure_conversation_relay`, `configure_harbor_voyage`, or
+  `configure_worker_placement`; score-track
+  and related ops are listed in `$edit-and-compile-game`.
 
 ## Authority boundaries
 

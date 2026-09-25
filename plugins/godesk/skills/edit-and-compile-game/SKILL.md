@@ -16,7 +16,9 @@ Keep Codex edits and manual Web Studio edits on the same optimistic-version path
    change.
 3. Open the exact Web Studio URL if it is not already visible.
 4. Translate the requested revision into the smallest supported
-   `apply_project_patch` operations. Use `configure_score_race` for per-seat
+   `apply_project_patch` operations. Choose the Executable Kernel with the
+   table in `$godesk-plugin-basics`; do not substitute a score-track
+   `configure_*` for a genre Kernel. Use `configure_score_race` for per-seat
    scoring, `configure_shared_goal` for one explicit cooperative progress
    track, or `configure_turn_taking` for an explicit bounded round-robin
    action loop without inferred scoring or a winner. Use
@@ -27,8 +29,15 @@ Keep Codex edits and manual Web Studio edits on the same optimistic-version path
    per value, target score, and one draw action; preserve finite-deck and
    exhaustion semantics. Use `configure_push_your_luck` for explicit die,
    bust face, banked-score target, safety limit, and the canonical `roll` and
-   `bank` actions. Do not silently change
-   Kernel semantics.
+   `bank` actions. Use `configure_hidden_role` for secret roles
+   (culprit/town), player count, and majority-reveal play. Use
+   `configure_hand_play` for shuffled deck, hidden hands, hand size,
+   play-to-score, and first-to-target (canonical `play` action). Use
+   `configure_conversation_relay` for speech acts recorded into the
+   transcript with a turn budget (no victory points). Use `configure_harbor_voyage`
+   for harbor-like corpus (player count 2–3). Use `configure_worker_placement`
+   for generic placement with source-derived regions/workers. Do not silently
+   change Kernel semantics.
 5. Pass the latest version as `expectedVersion` and a stable idempotency key.
 6. If the server rejects a stale version, re-read and reconcile. Preserve
    creator changes; do not force an overwrite.
@@ -39,7 +48,11 @@ Keep Codex edits and manual Web Studio edits on the same optimistic-version path
    Finding, pass that Finding as `basedOnFindingId`; otherwise leave the field
    absent.
 9. Read and open the immutable build from the terminal result. Report its
-   Rule System version, warnings, and unsupported behavior.
+   Rule System version, warnings, `presentationFloor`, `playabilityFloor`, and
+   unsupported behavior. Share gate is playability + genre fidelity (ADR 0012),
+   not kit cosmetics. If Presentation Floor cites "桌子好看但还不是那款游戏",
+   add/fix transcript, hand/play areas, named regions, or seat roles — do not
+   tell the creator to paste another kit or change the theme.
 
 ## Build discipline
 
