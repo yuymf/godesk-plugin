@@ -1,5 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="GoDesk">
-  <rect width="128" height="128" rx="28" fill="#111827"/>
-  <path d="M31 35h66v15H48v28h32V68H61V55h36v39H31z" fill="#F7F2E8"/>
-  <circle cx="92" cy="29" r="10" fill="#F04B33"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="GoDesk">
+  <rect width="32" height="32" rx="6" fill="#ffffff"/>
+  <g fill="#171717">
+    <rect x="4.5" y="4" width="11" height="24" rx="4" transform="rotate(-12 10 16)"/>
+    <rect x="17.5" y="4" width="11" height="24" rx="4" transform="rotate(12 23 16)"/>
+  </g>
+  <g fill="#ffffff">
+    <circle cx="9" cy="10" r="1.6"/>
+    <circle cx="11" cy="22" r="1.6"/>
+    <circle cx="24" cy="10" r="1.6"/>
+    <circle cx="22" cy="22" r="1.6"/>
+  </g>
 </svg>
